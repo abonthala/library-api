@@ -1,2 +1,2 @@
-# library-api
-Project for developing library API
+# library-apis
+Project for developing Library APIs
