@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.skb.course.apis.libraryapis.exceptions.LibraryResourceAlreadyExistsException;
 import com.skb.course.apis.libraryapis.exceptions.LibraryResourceNotFoundException;
+import com.skb.course.apis.libraryapis.utils.LibraryApiUtils;
 
 @Service
 public class PublisherService {
@@ -38,6 +39,31 @@ public class PublisherService {
 		if(publisher.isPresent())
 		{
 			PublisherEntity entity = publisher.get();
+			publish = new Publisher(entity.getPublisherId(), entity.getName(), entity.getEmailId(), entity.getPhoneNumber());
+		}
+		else
+		{
+			throw new LibraryResourceNotFoundException("Publisher_Id "+publisherId+" Not Found");
+		}
+		return publish;	
+	}
+
+	public Publisher updatePublisher(Integer publisherId, Publisher publisher) throws LibraryResourceNotFoundException{
+		Optional<PublisherEntity> publisherEntity = publisherRepository.findById(publisherId);
+		Publisher publish = null;
+		if(publisherEntity.isPresent())
+		{
+			PublisherEntity entity = publisherEntity.get();
+			if(LibraryApiUtils.doesStringValueExists(publisher.getEmailId()))
+			{
+				entity.setEmailId(publisher.getEmailId());
+			}
+			if(LibraryApiUtils.doesStringValueExists(publisher.getPhoneNumber()))
+			{
+				entity.setPhoneNumber(publisher.getPhoneNumber());
+			}
+			entity.setName(publisher.getName());
+			publisherRepository.save(entity);
 			publish = new Publisher(entity.getPublisherId(), entity.getName(), entity.getEmailId(), entity.getPhoneNumber());
 		}
 		else
