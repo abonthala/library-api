@@ -1,6 +1,9 @@
 package com.skb.course.apis.libraryapis.publisher;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -75,7 +78,6 @@ public class PublisherService {
 
 	public void deletePublisher(Integer publisherId) throws LibraryResourceNotFoundException{
 		Optional<PublisherEntity> publisherEntity = publisherRepository.findById(publisherId);
-		Publisher publish = null;
 		if(publisherEntity.isPresent())
 		{
 			PublisherEntity entity = publisherEntity.get();
@@ -86,6 +88,30 @@ public class PublisherService {
 			throw new LibraryResourceNotFoundException("Publisher_Id "+publisherId+" Not Found");
 		}
 		return;
+	}
+
+	public List<Publisher> searchPublisher(String name) {
+		List<PublisherEntity> publisherEntities = null;
+		if(LibraryApiUtils.doesStringValueExists(name))
+		{
+			publisherEntities = publisherRepository.findByName(name);
+		}
+		if(publisherEntities != null && publisherEntities.size() > 0)
+		{
+			return createPublishersForSearchResponse(publisherEntities);
+		}
+		else
+		{
+			return Collections.emptyList();
+		}
+	}
+
+	private List<Publisher> createPublishersForSearchResponse(List<PublisherEntity> publisherEntities) {
+		return publisherEntities.stream().map((publisherEntity) -> new Publisher(publisherEntity.getPublisherId(),
+																				 publisherEntity.getName(),
+																				 publisherEntity.getEmailId(),
+																				 publisherEntity.getPhoneNumber())).
+				collect(Collectors.toList());
 	}
 	
 }

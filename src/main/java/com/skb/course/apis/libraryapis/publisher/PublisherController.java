@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.skb.course.apis.libraryapis.exceptions.LibraryResourceAlreadyExistsException;
 import com.skb.course.apis.libraryapis.exceptions.LibraryResourceNotFoundException;
+import com.skb.course.apis.libraryapis.utils.LibraryApiUtils;
 
 @RestController
 @RequestMapping(path = "/v1/publishers")
@@ -71,5 +73,15 @@ public class PublisherController {
     		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     	}
     	return new ResponseEntity<>("Publisher Successfully Deleted.", HttpStatus.OK);
+    }
+    
+    @GetMapping("/search")
+    public ResponseEntity<?> searchPublisher(@RequestParam("Name") String name)
+    {
+    	if(!(LibraryApiUtils.doesStringValueExists(name)))
+    	{
+    		return new ResponseEntity<>("Please enter a name to search publisher.", HttpStatus.BAD_REQUEST);
+    	}
+    	return new ResponseEntity<>(publisherService.searchPublisher(name), HttpStatus.OK);
     }
 }
