@@ -25,7 +25,7 @@ public class PublisherEntity {
 	@Column(name="\"Publisher_Id\"", nullable=false)
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="publisherid_generator")
-	@SequenceGenerator(name="publisherid_generator", sequenceName="\"PUBLISHER_SEQUENCE\"", allocationSize=50)
+	@SequenceGenerator(name="publisherid_generator", sequenceName="PUBLISHER_SEQUENCE", allocationSize=50)
 	private Integer publisherId;
 	
 	@Column(name="\"Name\"", nullable=false, unique=true)

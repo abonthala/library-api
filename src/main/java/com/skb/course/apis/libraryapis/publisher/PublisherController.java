@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.skb.course.apis.libraryapis.exceptions.LibraryResourceAlreadyExistsException;
+import com.skb.course.apis.libraryapis.exceptions.LibraryResourceBadRequestException;
 import com.skb.course.apis.libraryapis.exceptions.LibraryResourceNotFoundException;
 import com.skb.course.apis.libraryapis.utils.LibraryApiUtils;
 
@@ -41,13 +42,7 @@ public class PublisherController {
     		traceId = UUID.randomUUID().toString();
     	}
     	Publisher publisher = null;
-    	try {
-    		publisher = publisherService.getPublisher(publisherId, traceId);
-    	}
-    	catch(LibraryResourceNotFoundException e) {
-    		logger.error("getPublisher Controller {}", traceId);
-    		return new ResponseEntity<>("Trace-Id "+traceId+" "+e.getMessage(), HttpStatus.NOT_FOUND);
-    	}
+    	publisher = publisherService.getPublisher(publisherId, traceId);
     	logger.info("getPublisher Controller {}", traceId);
         return new ResponseEntity<>(publisher, HttpStatus.OK);
     }
@@ -60,15 +55,7 @@ public class PublisherController {
     	{
     		traceId = UUID.randomUUID().toString();
     	}
-    	try 
-    	{
-    		publisher = publisherService.addPublisher(publisher, traceId);
-    	}
-    	catch(LibraryResourceAlreadyExistsException e)
-    	{
-    		logger.error("addPublisher Controller {}", traceId);
-    		return new ResponseEntity<>("Trace-Id "+traceId+" "+e.getMessage(), HttpStatus.CONFLICT);
-    	}
+    	publisher = publisherService.addPublisher(publisher, traceId);
     	logger.info("addPublisher Controller {}", traceId);
 		return new ResponseEntity<>(publisher, HttpStatus.CREATED);
     }
@@ -82,13 +69,7 @@ public class PublisherController {
     		traceId = UUID.randomUUID().toString();
     	}
     	Publisher updatedPublisher = null;
-    	try {
-    		updatedPublisher = publisherService.updatePublisher(publisherId, publisher, traceId);
-    	}
-    	catch(LibraryResourceNotFoundException e) {
-    		logger.error("updatePublisher Controller {}", traceId);
-    		return new ResponseEntity<>("Trace-Id "+traceId+" "+e.getMessage(), HttpStatus.NOT_FOUND);
-    	}
+    	updatedPublisher = publisherService.updatePublisher(publisherId, publisher, traceId);
     	logger.info("updatePublisher Controller {}", traceId);
         return new ResponseEntity<>(updatedPublisher, HttpStatus.OK);
     }
@@ -101,20 +82,14 @@ public class PublisherController {
     	{
     		traceId = UUID.randomUUID().toString();
     	}
-    	try {
-    		publisherService.deletePublisher(publisherId, traceId);
-    	}
-    	catch(LibraryResourceNotFoundException e) {
-    		logger.error("deletePublisher Controller {}", traceId);
-    		return new ResponseEntity<>("Trace-Id "+traceId+" "+e.getMessage(), HttpStatus.NOT_FOUND);
-    	}
+    	publisherService.deletePublisher(publisherId, traceId);
     	logger.info("deletePublisher Controller {}", traceId);
     	return new ResponseEntity<>("Publisher Successfully Deleted.", HttpStatus.OK);
     }
     
     @GetMapping("/search")
     public ResponseEntity<?> searchPublisher(@RequestParam("Name") String name,
-    		                                 @RequestHeader(value="Trace-Id", defaultValue="") String traceId)
+    		                                 @RequestHeader(value="Trace-Id", defaultValue="") String traceId) throws LibraryResourceBadRequestException
     {
     	if(!LibraryApiUtils.doesStringValueExists(traceId))
     	{
@@ -123,7 +98,7 @@ public class PublisherController {
     	if(!(LibraryApiUtils.doesStringValueExists(name)))
     	{
     		logger.error("searchPublisher Controller {}", traceId);
-    		return new ResponseEntity<>("Trace-Id "+traceId+" Please enter a name to search publisher.", HttpStatus.BAD_REQUEST);
+    		throw new LibraryResourceBadRequestException("Trace-Id "+traceId+" Please enter a name to search publisher.", traceId, HttpStatus.BAD_REQUEST);
     	}
     	logger.info("searchPublisher Controller {}", traceId);
     	return new ResponseEntity<>(publisherService.searchPublisher(name, traceId), HttpStatus.OK);

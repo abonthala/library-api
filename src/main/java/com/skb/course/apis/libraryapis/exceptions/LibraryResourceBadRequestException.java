@@ -2,13 +2,12 @@ package com.skb.course.apis.libraryapis.exceptions;
 
 import org.springframework.http.HttpStatus;
 
-public class LibraryResourceAlreadyExistsException extends RuntimeException {
+public class LibraryResourceBadRequestException extends Exception{
 	
 	private String traceId;
 	private HttpStatus status;
 	
-	public LibraryResourceAlreadyExistsException(String message, String traceId, 
-												HttpStatus status)
+	public LibraryResourceBadRequestException(String message, String traceId, HttpStatus status)
 	{
 		super(message);
 		this.traceId = traceId;
@@ -25,7 +24,6 @@ public class LibraryResourceAlreadyExistsException extends RuntimeException {
 
 	@Override
 	public String toString() {
-		return "LibraryResourceAlreadyExistsException [traceId=" + traceId + ", status=" + status + "]";
+		return "LibraryResourceBadRequestException [traceId=" + traceId + ", status=" + status + "]";
 	}
-
 }
