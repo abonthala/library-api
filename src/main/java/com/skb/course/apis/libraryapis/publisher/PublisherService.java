@@ -19,7 +19,7 @@ public class PublisherService {
 	@Autowired
 	private PublisherRepository publisherRepository;
 
-	public Publisher addPublisher(Publisher publisher) throws LibraryResourceAlreadyExistsException{
+	public Publisher addPublisher(Publisher publisher, String traceId) throws LibraryResourceAlreadyExistsException{
 		
 		PublisherEntity publisherEntity = new PublisherEntity(publisher.getName(), 
 															  publisher.getEmailId(), 
@@ -36,7 +36,7 @@ public class PublisherService {
 		return publisher;
 	}
 
-	public Publisher getPublisher(Integer publisherId) throws LibraryResourceNotFoundException{
+	public Publisher getPublisher(Integer publisherId, String traceId) throws LibraryResourceNotFoundException{
 		Optional<PublisherEntity> publisher = publisherRepository.findById(publisherId);
 		Publisher publish = null;
 		if(publisher.isPresent())
@@ -51,7 +51,7 @@ public class PublisherService {
 		return publish;	
 	}
 
-	public Publisher updatePublisher(Integer publisherId, Publisher publisher) throws LibraryResourceNotFoundException{
+	public Publisher updatePublisher(Integer publisherId, Publisher publisher, String traceId) throws LibraryResourceNotFoundException{
 		Optional<PublisherEntity> publisherEntity = publisherRepository.findById(publisherId);
 		Publisher publish = null;
 		if(publisherEntity.isPresent())
@@ -76,7 +76,7 @@ public class PublisherService {
 		return publish;	
 	}
 
-	public void deletePublisher(Integer publisherId) throws LibraryResourceNotFoundException{
+	public void deletePublisher(Integer publisherId, String traceId) throws LibraryResourceNotFoundException{
 		Optional<PublisherEntity> publisherEntity = publisherRepository.findById(publisherId);
 		if(publisherEntity.isPresent())
 		{
@@ -90,7 +90,7 @@ public class PublisherService {
 		return;
 	}
 
-	public List<Publisher> searchPublisher(String name) {
+	public List<Publisher> searchPublisher(String name, String traceId) {
 		List<PublisherEntity> publisherEntities = null;
 		if(LibraryApiUtils.doesStringValueExists(name))
 		{
