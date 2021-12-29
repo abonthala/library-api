@@ -72,5 +72,20 @@ public class PublisherService {
 		}
 		return publish;	
 	}
+
+	public void deletePublisher(Integer publisherId) throws LibraryResourceNotFoundException{
+		Optional<PublisherEntity> publisherEntity = publisherRepository.findById(publisherId);
+		Publisher publish = null;
+		if(publisherEntity.isPresent())
+		{
+			PublisherEntity entity = publisherEntity.get();
+			publisherRepository.delete(entity);
+		}
+		else
+		{
+			throw new LibraryResourceNotFoundException("Publisher_Id "+publisherId+" Not Found");
+		}
+		return;
+	}
 	
 }

@@ -3,6 +3,7 @@ package com.skb.course.apis.libraryapis.publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,5 +59,17 @@ public class PublisherController {
     		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     	}
         return new ResponseEntity<>(updatedPublisher, HttpStatus.OK);
+    }
+    
+    @DeleteMapping("{publisherId}")
+    public ResponseEntity<?> deletePublisher(@PathVariable("publisherId") Integer publisherId)
+    {
+    	try {
+    		publisherService.deletePublisher(publisherId);
+    	}
+    	catch(LibraryResourceNotFoundException e) {
+    		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    	}
+    	return new ResponseEntity<>("Publisher Successfully Deleted.", HttpStatus.OK);
     }
 }
