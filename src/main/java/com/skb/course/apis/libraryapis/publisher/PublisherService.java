@@ -5,10 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.skb.course.apis.libraryapis.exceptions.LibraryControllerExceptionHandler;
 import com.skb.course.apis.libraryapis.exceptions.LibraryResourceAlreadyExistsException;
 import com.skb.course.apis.libraryapis.exceptions.LibraryResourceNotFoundException;
 import com.skb.course.apis.libraryapis.utils.LibraryApiUtils;
@@ -18,6 +22,13 @@ public class PublisherService {
 	
 	@Autowired
 	private PublisherRepository publisherRepository;
+	
+	private static final Logger logger = LoggerFactory.getLogger(PublisherService.class);
+
+	public PublisherService(PublisherRepository publisherRepository) {
+		super();
+		this.publisherRepository = publisherRepository;
+	}
 
 	public Publisher addPublisher(Publisher publisher, String traceId) throws LibraryResourceAlreadyExistsException{
 		
@@ -30,7 +41,8 @@ public class PublisherService {
 		}
 		catch(DataIntegrityViolationException e)
 		{
-			throw new LibraryResourceAlreadyExistsException("Publisher already exists.");
+			logger.error("TraceId: {} Publisher: {}",traceId,publisher, e);
+			throw new LibraryResourceAlreadyExistsException("Publisher already exists.", traceId, HttpStatus.CONFLICT);
 		}
 		publisher.setPublisherId(addedPublisher.getPublisherId());
 		return publisher;
@@ -46,7 +58,8 @@ public class PublisherService {
 		}
 		else
 		{
-			throw new LibraryResourceNotFoundException("Publisher_Id "+publisherId+" Not Found");
+			logger.error("TraceId: {} PublisherId: {}",traceId,publisherId);
+			throw new LibraryResourceNotFoundException("Publisher_Id "+publisherId+" Not Found", traceId, HttpStatus.NOT_FOUND);
 		}
 		return publish;	
 	}
@@ -71,7 +84,7 @@ public class PublisherService {
 		}
 		else
 		{
-			throw new LibraryResourceNotFoundException("Publisher_Id "+publisherId+" Not Found");
+			throw new LibraryResourceNotFoundException("Publisher_Id "+publisherId+" Not Found", traceId, HttpStatus.NOT_FOUND);
 		}
 		return publish;	
 	}
@@ -85,7 +98,7 @@ public class PublisherService {
 		}
 		else
 		{
-			throw new LibraryResourceNotFoundException("Publisher_Id "+publisherId+" Not Found");
+			throw new LibraryResourceNotFoundException("Publisher_Id "+publisherId+" Not Found", traceId, HttpStatus.NOT_FOUND);
 		}
 		return;
 	}
